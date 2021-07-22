@@ -1,0 +1,4 @@
+numcodecs
+scikit-allel
+scipy
+zarr

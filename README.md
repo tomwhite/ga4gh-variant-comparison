@@ -21,7 +21,8 @@ For 1000 genomes chr22 (GT only)
 BCF: 134814650 (1.00)
 SAV: 55988890 (0.42)
 VCF: 163640209 (1.21)
-VCF Zarr: 59251992 (0.44)
+VCF Zarr (scikit-allel): 59251992 (0.44)
+VCF Zarr (sgkit): 72755668 (0.54)
 GT sparsity: 3.71%
 ```
 
@@ -61,6 +62,7 @@ Download chr22 from http://ftp.1000genomes.ebi.ac.uk/vol1/ftp/release/20130502/
 
 ```bash
 cp ALL.chr22.phase3_shapeit2_mvncall_integrated_v5b.20130502.genotypes.vcf.gz chr22.vcf.gz
+cp ALL.chr22.phase3_shapeit2_mvncall_integrated_v5b.20130502.genotypes.vcf.gz.tbi chr22.vcf.gz.tbi
 ~/sw/bcftools-1.10.2/bin/bcftools view -O b -o chr22.bcf ALL.chr22.phase3_shapeit2_mvncall_integrated_v5b.20130502.genotypes.vcf.gz
 
 # remove all INFO and FORMAT fields except GT
@@ -69,6 +71,7 @@ cp ALL.chr22.phase3_shapeit2_mvncall_integrated_v5b.20130502.genotypes.vcf.gz ch
 
 ~/sw/bcftools-1.10.2/bin/bcftools annotate -x INFO,FORMAT -O b -o chr22_gt.bcf ALL.chr22.phase3_shapeit2_mvncall_integrated_v5b.20130502.genotypes.vcf.gz
 ~/sw/bcftools-1.10.2/bin/bcftools annotate -x INFO,FORMAT -O z -o chr22_gt.vcf.bgz ALL.chr22.phase3_shapeit2_mvncall_integrated_v5b.20130502.genotypes.vcf.gz
+~/sw/htslib-1.10.2/bin/tabix chr22_gt.vcf.bgz
 ```
 
 Convert to SAV
@@ -87,3 +90,9 @@ python convert_to_vcfzarr.py chr22_gt.vcf.bgz chr22_gt.vcfzarr
 python convert_to_vcfzarr.py chr22.vcf.gz chr22.vcfzarr
 ```
 
+Convert to sgkit Zarr
+
+```
+python convert_to_sgzarr.py 1kg_gt.vcf.bgz 1kg_gt.sgzarr
+python convert_to_sgzarr.py chr22_gt.vcf.bgz chr22_gt.sgzarr
+```

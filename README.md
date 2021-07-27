@@ -18,24 +18,25 @@ Refs:
 
 For 1000 genomes chr22 (GT only)
 ```
-BCF: 134814650 (1.00)
-SAV: 55988890 (0.42)
-VCF: 163640209 (1.21)
-VCF Zarr (scikit-allel): 59251992 (0.44)
-VCF Zarr (sgkit): 72755668 (0.54)
+BCF: 128.6M (1.00)
+SAV: 53.4M (0.42)
+VCF: 156.1M (1.21)
+VCF Zarr (scikit-allel): 56.5M (0.44)
+VCF Zarr (sgkit): 56.5M (0.44)
 GT sparsity: 3.71%
 ```
 
 For 1000 genomes chr22 (all fields)
 ```
-BCF: 171258946 (1.00)
-SAV: 70176905 (0.41)
-VCF: 205612353 (1.20)
-VCF Zarr: 78378062 (0.46)
+BCF: 163.3M (1.00)
+SAV: 66.9M (0.41)
+VCF: 196.1M (1.20)
+VCF Zarr (scikit-allel): 74.7M (0.46)
+VCF Zarr (sgkit): 74.4M (0.46)
 GT sparsity: 3.71%
 ```
 
-To generate SAV from BCF it took 30s, but 5m27 from bgzip compressed VCF.
+To generate SAV from BCF took only 30s, but 5m27 from bgzip compressed VCF.
 To generate VCF Zarr it took 5m17 from bgzip compressed VCF - so very comparable.
 So it looks like parsing VCF dominates.
 
@@ -82,7 +83,7 @@ cget/bin/sav import -5 --phasing none chr22_gt.bcf chr22_gt.sav
 cget/bin/sav import -5 --phasing none chr22.bcf chr22.sav
 ```
 
-Convert to VCF Zarr
+Convert to VCF Zarr (scikit-allel)
 
 ```
 python convert_to_vcfzarr.py 1kg_gt.vcf.bgz 1kg_gt.vcfzarr
@@ -90,9 +91,10 @@ python convert_to_vcfzarr.py chr22_gt.vcf.bgz chr22_gt.vcfzarr
 python convert_to_vcfzarr.py chr22.vcf.gz chr22.vcfzarr
 ```
 
-Convert to sgkit Zarr
+Convert to VCF Zarr (sgkit)
 
 ```
 python convert_to_sgzarr.py 1kg_gt.vcf.bgz 1kg_gt.sgzarr
 python convert_to_sgzarr.py chr22_gt.vcf.bgz chr22_gt.sgzarr
+python convert_to_sgzarr.py chr22.vcf.gz chr22.sgzarr
 ```

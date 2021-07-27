@@ -1,39 +1,75 @@
 from pathlib import Path
+import humanize
 import numpy as np
 import zarr
+
 
 def get_file_size(file):
     return file.stat().st_size
 
+
 def get_dir_size(dir):
-    return sum(f.stat().st_size for f in dir.glob('**/*') if f.is_file())
+    return sum(f.stat().st_size for f in dir.glob("**/*") if f.is_file())
+
+
+def du(file):
+    if file.is_file():
+        return get_file_size(file)
+    return get_dir_size(file)
+
 
 def sparsity(dir):
     arr = zarr.open(str(dir))
     return np.count_nonzero(arr[:]) / arr.size
 
-if __name__ == "__main__":
-    bcf_size = get_file_size(Path("1kg_gt.bcf"))
-    sav_size = get_file_size(Path("1kg_gt.sav"))
-    vcf_size = get_file_size(Path("1kg_gt.vcf.bgz"))
-    vcfzarr_size = get_dir_size(Path("1kg_gt.vcfzarr"))
-    sgzarr_size = get_dir_size(Path("1kg_gt.sgzarr"))
 
-    bcf_size = get_file_size(Path("chr22_gt.bcf"))
-    sav_size = get_file_size(Path("chr22_gt.sav"))
-    vcf_size = get_file_size(Path("chr22_gt.vcf.bgz"))
-    vcfzarr_size = get_dir_size(Path("chr22_gt.vcfzarr"))
-    sgzarr_size = get_dir_size(Path("chr22_gt.sgzarr"))
+def gnusize(nbytes, format="%.1f"):
+    return humanize.naturalsize(nbytes, gnu=True, format=format)
 
-    # bcf_size = get_file_size(Path("chr22.bcf"))
-    # sav_size = get_file_size(Path("chr22.sav"))
-    # vcf_size = get_file_size(Path("chr22.vcf.gz"))
-    # vcfzarr_size = get_dir_size(Path("chr22.vcfzarr"))
 
-    print(f"BCF: {bcf_size} (1.00)")
-    print(f"SAV: {sav_size} ({sav_size / bcf_size:.2f})")
-    print(f"VCF: {vcf_size} ({vcf_size / bcf_size:.2f})")
-    print(f"VCF Zarr (scikit-allel): {vcfzarr_size} ({vcfzarr_size / bcf_size:.2f})")
-    print(f"VCF Zarr (sgkit): {sgzarr_size} ({sgzarr_size / bcf_size:.2f})")
-    s = sparsity(Path("chr22_gt.vcfzarr/calldata/GT")) * 100.0
+def print_stats(files):
+    bcf_size = du(Path(files["BCF"]))
+    for name, file in files.items():
+        size = du(Path(file))
+        print(f"{name}: {gnusize(size)} ({size / bcf_size:.2f})")
+    s = sparsity(Path(f"{files['VCF Zarr (scikit-allel)']}/calldata/GT")) * 100.0
     print(f"GT sparsity: {s:.2f}%")
+
+
+if __name__ == "__main__":
+
+    files = {
+        "BCF": "1kg_gt.bcf",
+        "VCF": "1kg_gt.vcf.bgz",
+        "SAV": "1kg_gt.sav",
+        "VCF Zarr (scikit-allel)": "1kg_gt.vcfzarr",
+        "VCF Zarr (sgkit)": "1kg_gt.sgzarr",
+    }
+
+    print("1000 genomes subset")
+    print_stats(files)
+    print()
+
+    files = {
+        "BCF": "chr22_gt.bcf",
+        "VCF": "chr22_gt.vcf.bgz",
+        "SAV": "chr22_gt.sav",
+        "VCF Zarr (scikit-allel)": "chr22_gt.vcfzarr",
+        "VCF Zarr (sgkit)": "chr22_gt.sgzarr",
+    }
+
+    print("1000 genomes chr22, GT only")
+    print_stats(files)
+    print()
+
+    files = {
+        "BCF": "chr22.bcf",
+        "VCF": "chr22.vcf.gz",
+        "SAV": "chr22.sav",
+        "VCF Zarr (scikit-allel)": "chr22.vcfzarr",
+        "VCF Zarr (sgkit)": "chr22.sgzarr",
+    }
+
+    print("1000 genomes chr22, all fields")
+    print_stats(files)
+    print()

@@ -11,7 +11,7 @@ from numcodecs import Blosc, Delta
 
 class Sparse(Codec):
 
-    codec_id = 'sparse'
+    codec_id = "sparse"
 
     def __init__(self):
         pass
@@ -46,7 +46,6 @@ class Sparse(Codec):
 
         return enc
 
-
     def decode(self, buf, out=None):
 
         enc = ensure_ndarray(buf)
@@ -56,7 +55,7 @@ class Sparse(Codec):
         N = enc[2]
         data = enc[3 : size + 3]
         row = enc[size + 3 : 2 * size + 3]
-        col = enc[2 * size + 3 : ]
+        col = enc[2 * size + 3 :]
 
         sarr = coo_matrix((data, (row, col)), shape=(M, N))
 
@@ -98,13 +97,21 @@ if __name__ == "__main__":
 
     chunks = arr.chunks
 
-    arr0 = arr[:chunks[0], :chunks[1], :chunks[2]]
+    arr0 = arr[: chunks[0], : chunks[1], : chunks[2]]
 
     print("sparsity arr0", np.count_nonzero(arr0) / arr0.size)
 
-    compressor = Blosc(cname='zstd', clevel=5, shuffle=Blosc.SHUFFLE)
+    compressor = Blosc(cname="zstd", clevel=5, shuffle=Blosc.SHUFFLE)
     filters = [Sparse(), Delta("i2")]
 
-    z = zarr.open("chr22_gt_sparse.vcfzarr", mode='w', filters=filters, compressor=compressor, shape=chunks, chunks=chunks, dtype='i1')
+    z = zarr.open(
+        "chr22_gt_sparse.vcfzarr",
+        mode="w",
+        filters=filters,
+        compressor=compressor,
+        shape=chunks,
+        chunks=chunks,
+        dtype="i1",
+    )
 
     z[:] = arr0

@@ -55,7 +55,7 @@ ls -l chr22_gt.vcfzarr/calldata/GT/0.0.0 # 2741718
 0.828 - a 13% saving - so not *that* significant.
 We could do a better job of packing bits though.
 
-### How to run
+## How to run
 
 Generate input files
 
@@ -98,3 +98,18 @@ python convert_to_sgzarr.py 1kg_gt.vcf.bgz 1kg_gt.sgzarr
 python convert_to_sgzarr.py chr22_gt.vcf.bgz chr22_gt.sgzarr
 python convert_to_sgzarr.py chr22.vcf.gz chr22.sgzarr
 ```
+
+## Random access
+
+Region
+```
+cget/bin/sav export --regions "2:22665048-22780029" --sample-ids "HG02010,NA19764" 1kg_gt.sav out.vcf
+python random_access.py region 1kg_gt.sgzarr "2:22665048-22780029" "HG02010,NA19764"
+```
+
+Slice
+```
+cget/bin/sav export --slice "1000:1002" --sample-ids "HG02010,NA19764" 1kg_gt.sav out.vcf
+python random_access.py slice 1kg_gt.sgzarr "1000:1002" "HG02010,NA19764"
+```
+

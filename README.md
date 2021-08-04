@@ -1,4 +1,4 @@
-# Scalable VCF
+# GA4GH Future of VCF comparison
 
 Experiments for scaling VCF.
 
